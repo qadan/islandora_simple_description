@@ -50,6 +50,10 @@ function islandora_simple_description_description_access() {
 function islandora_simple_description_download_access($object) {
   $access = user_access('view fedora repository objects');
   $object = islandora_object_load($object);
+  // $object->models checks all the content models associated with an object and
+  // returns them as an array. So here, we're just checking if islandora:sp_pdf
+  // is inside the array of models for this particular object. If not, then no
+  // Download link is rendered for this object.
   $is_cmodel = array_key_exists(variable_get('islandora_simple_description_cmodel', 'islandora:sp_pdf'), array_flip($object->models));
   if ($access && $is_cmodel) {
     return TRUE;
