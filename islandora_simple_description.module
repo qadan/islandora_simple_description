@@ -33,24 +33,34 @@ function islandora_simple_description_description_access() {
  * Renders the description display.
  */
 function islandora_simple_description_description_display($object) {
+  // Create a form array.
   $output = array();
+  // Create the fieldset title for the array.
   $output['title'] = array(
     '#type' => 'fieldset',
     '#title' => t('Description'),
     '#collapsible' => FALSE,
   );
+  // Load the object we want.
   $object = islandora_object_load($object);
+  // Check if the object has a MODS datastream.
   if (isset($object['MODS'])) {
+    // If it does, load the MODS as XML.
     $mods = simplexml_load_string($object['MODS']->content);
+    // Do an Xpath query for the abstract.
     $abstract = $mods->xpath("//mods:abstract");
+    // If we find something, stick it in the title fieldset as markup. If we
+    // don't, just display a message saying it wasn't there.
     $output['title']['description'] = array(
       '#markup' => isset($abstract[0]) ? (string) $abstract[0] : "No MODS description metadata found for this object.",
     );
   }
+  // If there is no MODS datastream, put that in the description instead.
   else {
     $output['title']['description'] = array(
       '#markup' => "No MODS metadata was found for this object.",
     );
   }
+  // Finally, return the form array to hook_menu.
   return $output;
 }
