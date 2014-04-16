@@ -1,0 +1,6 @@
+name = Islandora Simple Description
+description = Proof of concept for adding a 'description' tab to objects.
+dependencies[] = islandora
+package = Islandora
+version = 7.x-dev
+core = 7.x

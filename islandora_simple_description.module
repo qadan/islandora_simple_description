@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file
+ * Adds a "description" tab to objects.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_simple_description_menu() {
+  $items = array();
+  $items['islandora/object/%islandora_object/description'] = array(
+    'title' => 'Description',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'islandora_simple_description_description_display',
+    'page arguments' => array(2),
+    'access callback' => 'islandora_simple_description_description_access',
+  );
+  return $items;
+}
+
+/**
+ * Access callback for simple description.
+ */
+function islandora_simple_description_description_access() {
+  if (user_access('view fedora repository objects')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Renders the description display.
+ */
+function islandora_simple_description_description_display($object) {
+  $output = array();
+  $output['title'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Description'),
+    '#collapsible' => FALSE,
+  );
+  $object = islandora_object_load($object);
+  if (isset($object['MODS'])) {
+    $mods = simplexml_load_string($object['MODS']->content);
+    $abstract = $mods->xpath("//mods:abstract");
+    $output['title']['description'] = array(
+      '#markup' => isset($abstract[0]) ? (string) $abstract[0] : "No MODS description metadata found for this object.",
+    );
+  }
+  else {
+    $output['title']['description'] = array(
+      '#markup' => "No MODS metadata was found for this object.",
+    );
+  }
+  return $output;
+}
