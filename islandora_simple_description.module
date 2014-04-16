@@ -16,6 +16,14 @@ function islandora_simple_description_menu() {
     'page arguments' => array(2),
     'access callback' => 'islandora_simple_description_description_access',
   );
+  $items['islandora/object/%islandora_object/download_link'] = array(
+    'title' => 'Download',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'islandora_simple_description_download',
+    'page arguments' => array(2),
+    'access callback' => 'islandora_simple_description_download_access',
+    'access arguments' => array(2),
+  );
   $items['admin/islandora/simple_description'] = array(
     'title' => 'Simple Description',
     'page callback' => 'drupal_get_form',
@@ -31,6 +39,19 @@ function islandora_simple_description_menu() {
  */
 function islandora_simple_description_description_access() {
   if (user_access('view fedora repository objects')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Access callback for download link.
+ */
+function islandora_simple_description_download_access($object) {
+  $access = user_access('view fedora repository objects');
+  $object = islandora_object_load($object);
+  $is_cmodel = array_key_exists(variable_get('islandora_simple_description_cmodel', 'islandora:sp_pdf'), array_flip($object->models));
+  if ($access && $is_cmodel) {
     return TRUE;
   }
   return FALSE;
@@ -73,4 +94,15 @@ function islandora_simple_description_description_display($object) {
   }
   // Finally, return the form array to hook_menu.
   return $output;
+}
+
+/**
+ * Renders the download screen.
+ */
+function islandora_simple_description_download($object) {
+  $form = array();
+  $form['link'] = array(
+    '#markup' => l("Download this object", "islandora/object/{$object->id}/datastream/OBJ/download")
+  );
+  return $form;
 }

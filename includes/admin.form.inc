@@ -20,5 +20,12 @@ function islandora_simple_description_admin_form($form, &$form_state) {
       '#default_value' => '//dc:description',
       '#required' => TRUE,
     ),
+    'islandora_simple_description_cmodel' => array(
+      '#type' => 'textfield',
+      '#title' => t('Downloadable OBJ content model'),
+      '#description' => t('The content model PID that renders OBJ download tabs on objects.'),
+      '#default_value' => 'islandora:sp_pdf',
+      '#required' => TRUE,
+    )
   ));
 }
